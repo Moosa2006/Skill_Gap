@@ -37,10 +37,23 @@ mongoose
 const userSchema = new mongoose.Schema(
   {
     username: { type: String, required: true, unique: true },
+    fullName: { type: String, default: "" },
+    password: { type: String, default: "" }, // demo only (plain text for simplicity)
     goal: { type: String, required: true },
     selectedSkills: { type: [String], default: [] },
     missingSkills: { type: [String], default: [] },
     completedSkills: { type: [String], default: [] },
+    testResults: {
+      type: [
+        {
+          skill: String,
+          score: Number,
+          total: Number,
+          attemptedAt: Date,
+        },
+      ],
+      default: [],
+    },
   },
   { timestamps: true }
 );
@@ -52,6 +65,70 @@ const User = mongoose.model("User", userSchema);
 // Health check (optional)
 app.get("/", (req, res) => {
   res.json({ message: "Skill Gap Finder API is running" });
+});
+
+// POST /signup
+// Simple signup for demo (no advanced auth/JWT)
+app.post("/signup", async (req, res) => {
+  try {
+    const { username, password, fullName } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ error: "username and password are required" });
+    }
+
+    const existing = await User.findOne({ username });
+    if (existing) {
+      return res.status(409).json({ error: "Username already exists" });
+    }
+
+    const user = await User.create({
+      username,
+      fullName: fullName || "",
+      password,
+      goal: "frontend",
+      selectedSkills: [],
+      missingSkills: [],
+      completedSkills: [],
+      testResults: [],
+    });
+
+    res.status(201).json({
+      message: "Signup successful",
+      user: { username: user.username, fullName: user.fullName },
+    });
+  } catch (err) {
+    console.error("Error in /signup:", err);
+    res.status(500).json({ error: "Failed to signup" });
+  }
+});
+
+// POST /login
+// Simple login for demo (checks username + password)
+app.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ error: "username and password are required" });
+    }
+
+    const user = await User.findOne({ username });
+    if (!user || user.password !== password) {
+      return res.status(401).json({ error: "Invalid username or password" });
+    }
+
+    res.json({
+      message: "Login successful",
+      user: {
+        username: user.username,
+        fullName: user.fullName || "",
+      },
+    });
+  } catch (err) {
+    console.error("Error in /login:", err);
+    res.status(500).json({ error: "Failed to login" });
+  }
 });
 
 // POST /save-user
@@ -86,7 +163,7 @@ app.post("/save-user", async (req, res) => {
         goal,
         selectedSkills: safeSelected,
         missingSkills: safeMissing,
-        $setOnInsert: { completedSkills }, // only set on first creation
+        $setOnInsert: { completedSkills, fullName: "", password: "" }, // only set on first creation
       },
       {
         new: true,
@@ -117,6 +194,35 @@ app.get("/user/:id", async (req, res) => {
   }
 });
 
+// GET /profile/:id
+// Returns profile + progress + test history
+app.get("/profile/:id", async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.id });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const totalRequired = user.selectedSkills.length + user.missingSkills.length;
+    const completed = user.completedSkills.length;
+    const progressPercent = totalRequired === 0 ? 0 : Math.round((completed / totalRequired) * 100);
+
+    res.json({
+      username: user.username,
+      fullName: user.fullName || "",
+      goal: user.goal,
+      selectedSkills: user.selectedSkills,
+      missingSkills: user.missingSkills,
+      completedSkills: user.completedSkills,
+      testResults: user.testResults,
+      progressPercent,
+    });
+  } catch (err) {
+    console.error("Error in /profile/:id:", err);
+    res.status(500).json({ error: "Failed to fetch profile" });
+  }
+});
+
 // PUT /update-progress
 // Update completed skills for a user
 app.put("/update-progress", async (req, res) => {
@@ -143,6 +249,38 @@ app.put("/update-progress", async (req, res) => {
   } catch (err) {
     console.error("Error in /update-progress:", err);
     res.status(500).json({ error: "Failed to update progress" });
+  }
+});
+
+// POST /save-test-result
+// Save or update a skill test result for a user
+app.post("/save-test-result", async (req, res) => {
+  try {
+    const { username, skill, score, total } = req.body;
+
+    if (!username || !skill || typeof score !== "number" || typeof total !== "number") {
+      return res.status(400).json({ error: "username, skill, score, total are required" });
+    }
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const index = user.testResults.findIndex((item) => item.skill === skill);
+    const resultData = { skill, score, total, attemptedAt: new Date() };
+
+    if (index >= 0) {
+      user.testResults[index] = resultData;
+    } else {
+      user.testResults.push(resultData);
+    }
+
+    await user.save();
+    res.json({ message: "Test result saved", testResults: user.testResults });
+  } catch (err) {
+    console.error("Error in /save-test-result:", err);
+    res.status(500).json({ error: "Failed to save test result" });
   }
 });
 

@@ -1,5 +1,21 @@
 const API_BASE = "http://localhost:4000"; // backend URL
 
+// Pre-fill username if user logged in from auth page
+window.addEventListener("DOMContentLoaded", () => {
+    const savedUser = localStorage.getItem("skillmap_user");
+    if (!savedUser) return;
+
+    try {
+        const user = JSON.parse(savedUser);
+        if (user && user.username) {
+            const usernameInput = document.getElementById("username");
+            if (usernameInput) usernameInput.value = user.username;
+        }
+    } catch (err) {
+        console.error("Invalid saved user data", err);
+    }
+});
+
 async function analyze() {
     const usernameInput = document.getElementById("username");
     const username = usernameInput ? usernameInput.value.trim() : "";

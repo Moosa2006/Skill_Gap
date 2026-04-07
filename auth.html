@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillMap X - Signup / Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container auth-container">
+    <header class="header">
+      <h1 class="title">Signup / Login</h1>
+      <p class="subtitle">Create an account to save your profile, progress, and test history.</p>
+      <div class="top-links">
+        <a href="index.html">Skill Analysis</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+    </header>
+
+    <div class="auth-tabs">
+      <button class="tab-btn active" id="show-signup">Signup</button>
+      <button class="tab-btn" id="show-login">Login</button>
+    </div>
+
+    <section id="signup-form" class="card">
+      <h2 class="section-title">Create Account</h2>
+      <label class="field-label" for="signup-name">Full name</label>
+      <input class="select" id="signup-name" type="text" placeholder="e.g. Alex Johnson" />
+
+      <label class="field-label" for="signup-username">Username</label>
+      <input class="select" id="signup-username" type="text" placeholder="e.g. alex_frontend" />
+
+      <label class="field-label" for="signup-password">Password</label>
+      <input class="select" id="signup-password" type="password" placeholder="Enter password" />
+
+      <button class="primary-btn" id="signup-btn">Create Account</button>
+    </section>
+
+    <section id="login-form" class="card hidden">
+      <h2 class="section-title">Login</h2>
+      <label class="field-label" for="login-username">Username</label>
+      <input class="select" id="login-username" type="text" placeholder="Your username" />
+
+      <label class="field-label" for="login-password">Password</label>
+      <input class="select" id="login-password" type="password" placeholder="Your password" />
+
+      <button class="primary-btn" id="login-btn">Login</button>
+    </section>
+
+    <div id="auth-message" class="status-card muted"></div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>
+
