@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Gap Finder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">Skill Gap Finder</h1>
+            <p class="subtitle">Pick a target role, select what you already know, and get a clean roadmap with courses.</p>
+        </header>
+
+        <!-- Simple username / ID -->
+        <label class="field-label" for="username">Enter a username (simple ID)</label>
+        <input id="username" class="select" type="text" placeholder="e.g. alex_frontend" />
+
+        <!-- Goal Selection -->
+        <label class="field-label" for="goal">Select your goal</label>
+        <select id="goal" class="select">
+            <option value="frontend">Frontend Developer</option>
+            <option value="backend">Backend Developer</option>
+            <option value="fullstack">Full Stack Developer</option>
+            <option value="data">Data Analyst</option>
+            <option value="ai">AI/ML Engineer</option>
+        </select>
+
+        <!-- Skills Selection -->
+        <div class="section-header">
+            <h3 class="section-title">Select your skills</h3>
+            <p class="section-hint">Tip: choose what you can confidently use in a small project.</p>
+        </div>
+
+        <div id="skills" class="skills-grid">
+
+            <h4>💻 Programming Languages</h4>
+            <label><input type="checkbox" value="HTML"> HTML</label>
+            <label><input type="checkbox" value="CSS"> CSS</label>
+            <label><input type="checkbox" value="JavaScript"> JavaScript</label>
+            <label><input type="checkbox" value="Python"> Python</label>
+            <label><input type="checkbox" value="Java"> Java</label>
+            <label><input type="checkbox" value="C++"> C++</label>
+            <label><input type="checkbox" value="TypeScript"> TypeScript</label>
+
+            <h4>⚙️ Frameworks & Libraries</h4>
+            <label><input type="checkbox" value="React"> React</label>
+            <label><input type="checkbox" value="Next.js"> Next.js</label>
+            <label><input type="checkbox" value="Node.js"> Node.js</label>
+            <label><input type="checkbox" value="Express"> Express</label>
+            <label><input type="checkbox" value="Flask"> Flask</label>
+            <label><input type="checkbox" value="Django"> Django</label>
+            <label><input type="checkbox" value="FastAPI"> FastAPI</label>
+
+            <h4>🗄️ Databases</h4>
+            <label><input type="checkbox" value="MongoDB"> MongoDB</label>
+            <label><input type="checkbox" value="SQL"> SQL</label>
+            <label><input type="checkbox" value="Firebase"> Firebase</label>
+            <label><input type="checkbox" value="PostgreSQL"> PostgreSQL</label>
+
+            <h4>🛠️ Tools</h4>
+            <label><input type="checkbox" value="Git"> Git</label>
+            <label><input type="checkbox" value="GitHub"> GitHub</label>
+            <label><input type="checkbox" value="VS Code"> VS Code</label>
+            <label><input type="checkbox" value="Docker"> Docker</label>
+
+            <h4>📈 Data & AI</h4>
+            <label><input type="checkbox" value="NumPy"> NumPy</label>
+            <label><input type="checkbox" value="Pandas"> Pandas</label>
+            <label><input type="checkbox" value="Statistics"> Statistics</label>
+            <label><input type="checkbox" value="Machine Learning"> Machine Learning</label>
+
+            <h4>✅ Interview / Professional</h4>
+            <label><input type="checkbox" value="DSA"> DSA</label>
+            <label><input type="checkbox" value="System Design"> System Design</label>
+
+        </div>
+
+        <button class="primary-btn" onclick="analyze()">Analyze skill gaps</button>
+
+        <!-- Output -->
+        <div id="result"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
